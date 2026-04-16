@@ -1,51 +1,48 @@
-import { useEffect, useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, StyleSheet, Image } from "react-native";
 
-export default function Perfil() {
+export default function Perfil({ route }) {
+  const { user } = route.params;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.containerForm}>
-          {enviar && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.cardTitulo}>Dados Cadastrados:</Text>
-              <Text style={styles.cardTexto}>Nome: {nome}</Text>
-              <Text style={styles.cardTexto}>Curso: {curso}</Text>
-              <Text style={styles.cardTexto}>Disciplina: {disciplina}</Text>
-              <Text style={styles.cardTexto}>Descrição: {descricao}</Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <View style={styles.identificacao}>
+        <Image source={require("../../assets/eu.jpg")} style={styles.foto} />
+        <Text style={styles.textoFixo}>Aluno: Pietro Donella Salomão</Text>
+        <Text style={styles.textoFixo}>RM: 561722</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitulo}>Dados Cadastrados:</Text>
+        <Text style={styles.info}>Nome: {user.nome}</Text>
+        <Text style={styles.info}>CPF: {user.cpf}</Text>
+        <Text style={styles.info}>Telefone: {user.telefone}</Text>
+        <Text style={styles.info}>Curso: {user.curso}</Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    marginTop: 30,
+  container: {
+    flex: 1,
     padding: 20,
+    backgroundColor: "#c7f7c3",
+    alignItems: "center",
+  },
+  identificacao: { marginBottom: 30, alignItems: "center" },
+  foto: { width: 100, height: 100, borderRadius: 50, marginBottom: 10 },
+  textoFixo: { fontSize: 18, fontWeight: "bold", color: "#000212" },
+  card: {
     backgroundColor: "#000212",
+    padding: 20,
     borderRadius: 10,
+    width: "100%",
   },
   cardTitulo: {
-    fontSize: 22,
-    fontWeight: "bold",
     color: "#c7f7c3",
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 10,
-    textAlign: "center",
   },
-  cardTexto: {
-    fontSize: 14,
-    color: "white",
-    marginBottom: 5,
-  },
+  info: { color: "white", fontSize: 16, marginBottom: 5 },
 });
