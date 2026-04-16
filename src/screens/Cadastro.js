@@ -1,127 +1,111 @@
-import { useEffect, useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import MaskInput, { Masks } from 'react-native-mask-input'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Cadastro() {
-  const [nome, setNome] = useState("");
-  const [curso, setCurso] = useState("");
-  const [disciplina, setDisciplina] = useState("");
-  const [descricao, setDescricao] = useState("");
-
-  const [enviar, setEnviar] = useState(false);
+export default function Cadastro({ navigation }) {
+  const [nome, setNome] = useState('');
+  const [formCPF, setFormCPF] = useState(''); 
+  const [telefone, setTelefone] = useState('');
+  const [curso, setCurso] = useState('');
 
   useEffect(() => {
-    console.log("CP2 - Pronto para uso.");
+    const carregarDados = async () => {
+      const valor = await AsyncStorage.getItem('@dados_usuario');
+      if (valor !== null) {
+        const dados = JSON.parse(valor);
+        setNome(dados.nome || '');
+        setFormCPF(dados.cpf || '');
+        setTelefone(dados.telefone || '');
+        setCurso(dados.curso || '');
+      }
+    };
+    carregarDados();
   }, []);
 
-  const gerenciarEnvio = () => {
-    setEnviar(true);
-  };
+  const salvarEAvancar = async () => {
+    if (!nome || !formCPF || !telefone || !curso) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
 
-  const reiniciarFormulario = () => {
-    setNome("");
-    setCurso("");
-    setDisciplina("");
-    setDescricao("");
-    setEnviar(false);
+    const dados = { nome, cpf: formCPF, telefone, curso };
+    
+    await AsyncStorage.setItem('@dados_usuario', JSON.stringify(dados));
+    
+    navigation.navigate('Perfil', { user: dados });
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.containerForm}>
-          <Text style={styles.titulo}>CP 1 - Mobile Dev</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.titulo}>Cadastro de Usuário</Text>
+      
+      <Text style={styles.label}>Nome:</Text>
+      <TextInput 
+        style={styles.input} 
+        value={nome} 
+        onChangeText={setNome} 
+        placeholder="Nome completo" 
+      />
 
-          <Text style={styles.label}>Nome: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite seu nome completo"
-            value={nome}
-            onChangeText={setNome}
-          />
+      <Text style={styles.label}>CPF:</Text>
+      <MaskInput
+        style={styles.input}
+        value={formCPF}
+        onChangeText={setFormCPF}
+        mask={Masks.BRL_CPF}
+        placeholder='000.000.000-00'
+        placeholderTextColor='#484f58'
+        keyboardType='numeric'
+      />
 
-          <Text style={styles.label}>Curso: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Administração"
-            value={curso}
-            onChangeText={setCurso}
-          />
+      <Text style={styles.label}>Telefone:</Text>
+      <MaskInput
+        style={styles.input}
+        value={telefone}
+        onChangeText={setTelefone}
+        mask={Masks.BRL_PHONE}
+        placeholder='(00) 00000-0000'
+        placeholderTextColor='#484f58'
+        keyboardType='numeric'
+      />
 
-          <Text style={styles.label}>Disciplina: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Economia"
-            value={disciplina}
-            onChangeText={setDisciplina}
-          />
+      <Text style={styles.label}>Curso:</Text>
+      <TextInput 
+        style={styles.input} 
+        value={curso} 
+        onChangeText={setCurso} 
+        placeholder="Seu curso" 
+      />
 
-          <Text style={styles.label}>Apresentação: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nos conte mais sobre você."
-            multiline={true}
-            numberOfLines={3}
-            value={descricao}
-            onChangeText={setDescricao}
-            submitBehavior="blurAndSubmit"
-            returnKeyType="done"
-          />
-
-          <Button title="Finalizar" onPress={gerenciarEnvio} color="#000212" />
-
-          <View style={{ marginTop: 15 }}>
-            <Button
-              title="Reiniciar"
-              onPress={reiniciarFormulario}
-              color="red"
-            />
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <Button title="Salvar e Ver Perfil" onPress={salvarEAvancar} color="#000212" />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     flex: 1,
-    backgroundColor: "#c7f7c3",
-    paddingHorizontal: 20,
+    padding: 20,
+    backgroundColor: '#c7f7c3' 
   },
-  containerForm: {
+  titulo: { 
+    fontSize: 24,
+    fontWeight: 'bold',
     marginBottom: 20,
-    width: "100%",
+    textAlign: 'center' 
   },
-  titulo: {
-    fontSize: 30,
-    fontWeight: "900",
-    color: "#000212",
-    textAlign: "center",
-    marginVertical: 40,
-  },
-  input: {
-    backgroundColor: "white",
-    padding: 15,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 10,
-    fontSize: 17,
-    borderWidth: 3,
-    borderColor: "#000212",
-    marginBottom: 25,
-  },
-  label: {
-    fontSize: 20,
-    fontWeight: "bold",
+  label: { 
+    fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 5,
-    color: "#000212",
+    color: '#000212' 
   },
+  input: { 
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+    borderWidth: 1 
+  }
 });
