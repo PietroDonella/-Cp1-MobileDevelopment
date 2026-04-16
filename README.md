@@ -23,13 +23,14 @@ Criar um aplicativo mobile focado na entrada de dados, persistência local e nav
 
 ## 📂 Estrutura do Projeto
 
+```text
 📦 src
  ┣ 📂 assets          # Imagens locais (ex: foto de perfil)
  ┣ 📂 screens
  ┃ ┣ 📜 Cadastro.js   # Lógica de formulário, validação e persistência
  ┃ ┗ 📜 Perfil.js     # Tela de destino com dados estáticos do aluno e dinâmicos do usuário
  📜 App.js            # Configuração e gerenciamento de rotas
-
+```
 ## 🚀 Como Executar
 
 1. Clone o repositório para sua máquina local.
